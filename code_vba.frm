@@ -184,17 +184,17 @@ End Sub
 
 'module 2
 
+
 Sub initialiser()
 
 Set feuille_active = Sheets("CalculFacture")
-
-With feuille_active
-       .Range("B9:B15").ClearContents
-       .Range("C9:C15").ClearContents
-       .Range("D9:D15").ClearContents
-       .Range("E9:E15").ClearContents
-       .Range("F19:F20").ClearContents
-    End With
+ With feuille_active
+       .Range("B9:B15") = ""
+       .Range("C9:C15") = ""
+       .Range("D9:D15") = ""
+       .Range("E9:E15") = ""
+       .Range("F19:F20") = ""
+End With
 End Sub
 
 Sub calculMontant()
@@ -203,51 +203,47 @@ Dim i As Integer
     For i = 9 To 15
         quantite = feuille_active.Cells(i, 3).Value
         prix = feuille_active.Cells(i, 4).Value
-        With feuille_active
-            .Cells(i, 5).Value = prix * quantite
-            .Cells(i, 5).Value = prix * quantite
-            .Cells(i, 5).Value = prix * quantite
-            .Cells(i, 5).Value = prix * quantite
-            .Cells(i, 5).NumberFormat = "0.00 €"
-        End With
+        
+        If Cells(i, 3).Value <> "" And Cells(i, 4).Value <> "" Then
+            With feuille_active
+                .Cells(i, 5).Value = prix * quantite
+                .Cells(i, 5).NumberFormat = "0.00 €"
+            End With
+        Else
+            feuille_active.Cells(i, 5) = ""
+        End If
     Next i
     
 End Sub
 
 Sub CalculerTotalHT()
-    
+
     Set feuille_active = Sheets("CalculFacture")
     
     Dim i As Integer
     Dim sommeHT As Double
-    Dim valeurCellule As String
+    Dim valeurCellule As Double
     sommeHT = 0
-    
+
     For i = 9 To 15
-        
-        valeurCellule = feuille_active.Cells(i, 5).Value
-        
-        If valeurCellule <> "" Then
+        If feuille_active.Cells(i, 5).Value <> "" Then
+            valeurCellule = feuille_active.Cells(i, 5).Value
             sommeHT = sommeHT + valeurCellule
-        Else
-        MsgBox " case vide "
-        Exit Sub
         End If
     Next i
-    
-      With feuille_active
-            .Range("E19").Value = "Total HT :"
-            .Cells(19, 6).Value = sommeHT
-            .Cells(19, 6).NumberFormat = "0.00 €"
-      End With
-    
-End Sub
 
+    With feuille_active
+        .Range("E19").Value = "Total HT :"
+        .Cells(19, 6).Value = sommeHT
+        .Cells(19, 6).NumberFormat = "0.00 €"
+    End With
+
+End Sub
 
 Sub calculTVA()
 
 Set feuille_active = Sheets("CalculFacture")
-Dim TVA As Variant
+Dim TVA As Integer
 
 TVA = feuille_active.Range("F19").Value
 
@@ -277,4 +273,5 @@ MsgBox "Total TTC: " & Format(TTC, "0.00") & " €"
 
 
 End Sub
+
 
