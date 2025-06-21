@@ -45,9 +45,13 @@ Sub GenererFacture()
     Dim calculfacture As Worksheet
     Dim ligne As Integer
     Dim produit As String
-    Dim quantite As Integer
-    Dim prix As Integer
-
+    Dim quantite As Double
+    Dim prix As Double
+    Dim i As Integer
+    
+    'inisalization de ligne et i
+    ligne = 0
+    i = 0
     'selection la feuile active (Facture)
     Set feuille_active = Sheets("FACTURE")
     'selection la feuile calculactive
@@ -71,12 +75,11 @@ Sub GenererFacture()
              Exit Sub
             End If
             'Vérifie que c'est des lettres
-            If Not produit Like "*[!A-Za-z ]*" Then
-                Exit Do
-            Else
+            If IsNumeric(produit) Then
                 MsgBox "erreur Seules les lettres alphabétiques sont autorisées"
+            Else
+                Exit Do
             End If
-            
             
         Loop
         
@@ -127,8 +130,8 @@ Sub GenererFacture()
         ' Format de prix et montant
         With feuille_active
                 .Cells(ligne, 3).NumberFormat = "0"
-                .Cells(ligne, 4).NumberFormat = "0.00 €"
-                .Cells(ligne, 5).NumberFormat = "0.00 €"
+                .Cells(ligne, 4).NumberFormat = "0 €"
+                .Cells(ligne, 5).NumberFormat = "0 €"
                 
         End With
         i = ligne + 5
@@ -137,15 +140,9 @@ Sub GenererFacture()
                 .Cells(i, 2).Value = produit
                 .Cells(i, 3).Value = quantite
                 .Cells(i, 4).Value = prix
-        End With
-        
-        'Format de prix et montant sur la feuille calculfacture
-        With feuille_active
                 .Cells(i, 3).NumberFormat = "0"
-                .Cells(i, 4).NumberFormat = "0.00 €"
-                
+                .Cells(i, 4).NumberFormat = "0 €"
         End With
-        
     
     Next ligne
     
@@ -171,7 +168,7 @@ Sub sommeM()
     ' Calculer le total en E16
     With feuille_active.Range("E16")
         .Formula = "=SUM(" & plage_montants.Address & ")"
-        .NumberFormat = "0.00 €"
+        .NumberFormat = "0 €"
         .Font.Bold = True
     End With
     
@@ -179,10 +176,8 @@ Sub sommeM()
 End Sub
 
 
-
-
-
 'module 2
+
 
 
 Sub initialiser()
@@ -207,7 +202,7 @@ Dim i As Integer
         If Cells(i, 3).Value <> "" And Cells(i, 4).Value <> "" Then
             With feuille_active
                 .Cells(i, 5).Value = prix * quantite
-                .Cells(i, 5).NumberFormat = "0.00 €"
+                .Cells(i, 5).NumberFormat = "0 €"
             End With
         Else
             feuille_active.Cells(i, 5) = ""
@@ -235,7 +230,7 @@ Sub CalculerTotalHT()
     With feuille_active
         .Range("E19").Value = "Total HT :"
         .Cells(19, 6).Value = sommeHT
-        .Cells(19, 6).NumberFormat = "0.00 €"
+        .Cells(19, 6).NumberFormat = "0 €"
     End With
 
 End Sub
@@ -243,7 +238,7 @@ End Sub
 Sub calculTVA()
 
 Set feuille_active = Sheets("CalculFacture")
-Dim TVA As Integer
+Dim TVA As Double
 
 TVA = feuille_active.Range("F19").Value
 
@@ -252,7 +247,7 @@ TVA = TVA * 0.2
 With feuille_active
             .Range("E20").Value = "TVA(20%):"
             .Cells(20, 6).Value = TVA
-            .Cells(20, 6).NumberFormat = "0.00 €"
+            .Cells(20, 6).NumberFormat = "0 €"
       End With
 
 End Sub
@@ -260,18 +255,19 @@ End Sub
 Sub Total_TTC()
 
 Set feuille_active = Sheets("CalculFacture")
-Dim TTC As Variant
-Dim HT As Variant
-Dim TVA As Variant
+Dim TTC As Double
+Dim HT As Double
+Dim TVA As Double
 
 HT = feuille_active.Range("F19").Value
 TVA = feuille_active.Range("F20").Value
 
 TTC = HT + TVA
 
-MsgBox "Total TTC: " & Format(TTC, "0.00") & " €"
+MsgBox "Total TTC: " & TTC & " €"
 
 
 End Sub
+
 
 
