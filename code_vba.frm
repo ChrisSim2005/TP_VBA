@@ -160,7 +160,7 @@ Sub sommeM()
     Set plage_montants = feuille_active.Range("E4:E10")
     
     ' Ajouter le TOTAL en B16
-    With feuille_active.Range("B16")
+    With feuille_active.Range("B19")
         .Value = "TOTAL"
         .Font.Bold = True
     End With
